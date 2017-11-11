@@ -29,9 +29,9 @@ The pipeline I developed was based on the lesson material, which I then optimize
 
 1. Convert the frame to grayscale
 2. Apply a Gaussian blur (k=5) to smooth the image
-3. Apply a Canny transform to find all edges
+3. Apply a Canny transform to find all edges. I iterated over several thresholds, but found that 50/150 was optimal.
 3. Mask the frame
-4. Apply a Hough transform to obtain lane line candidates
+4. Apply a Hough transform to obtain lane line candidates. I iterated over many parameters until a suitable set was identified.
 
 ##### The following steps were performed in the draw_lines() function for each frame
 5. Filter out the candidates with implausible slopes (too shallow)
@@ -65,7 +65,7 @@ Several shortcomings could impact the performance of this algorithm, and in fact
 
 For each shortcoming, here are possible solutions:
 
-1. Using a more robust edge finder and color filtering to ifnore shadows.
+1. Using a more robust edge finder and color filtering to ignore shadows.
 2. Transform the lines into a exression that does not include infinities (polar)
 3. Use a polynomial interpolation instead of linear.
 4. Forgo K-means in favor of a leaner and more flexible sorting algoirthm (regression?)
