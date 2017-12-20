@@ -64,7 +64,7 @@ This provided a clear understanding of the variety of available examples for tra
 
 ### Design and Test a Model Architecture
 
-#### 1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
+#### 1. Data Preperation
 
 ##### Step 1: Preprocessing
 
@@ -118,8 +118,7 @@ Training was done using the Adams Optimizer, which was instructed to minimize th
 - Epochs = 50
 - Batch Size = 50
 
-#### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
-
+#### 4. Solution Approach
 
 My final model results were:
 * training set accuracy of 99.2%
@@ -173,7 +172,7 @@ After these changes it was observed that the training accuracy was 100%. This se
 
 ### Test a Model on New Images
 
-#### 1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
+#### 1. External German Traffic Signs
 
 Here are five German traffic signs that I found on the web:
 
@@ -181,13 +180,13 @@ Here are five German traffic signs that I found on the web:
 ![alt text][image7] ![alt text][image8]
 
 Difficulties:
-1. Could be mistaken with other speed signs due to the low resolution of the text
-2. Shares features with other signs related to passing.
-3. In poor lighting, the yellow could be indistinguishable from the white background
-4. Shares basic feature of white on red with many signs.
-5. Many fine details may be hard for the network to differentiate. Looks very similar to the children crossing sign.
+1. 30 kph sign could be mistaken with other speed signs due to the low resolution of the text
+2. No Passing sign shares features with other signs with vehicles in them.
+3. Priority Road: In poor lighting, the yellow could be indistinguishable from the white background
+4. No Vehicles: Shares basic feature of white on red with many signs.
+5. Road Work: Many fine details may be hard for the network to differentiate. Looks very similar to the children crossing sign.
 
-#### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
+#### 2. Discussion on external signs
 
 Here are the results of the prediction:
 
@@ -201,7 +200,7 @@ Here are the results of the prediction:
 
 On the external traffic sign dataset, an accuracy of 80% was achieved. On other training rounds for this network, the accuracy was 100%. Compared to the test set (95.1%), this result matches up excellently. The only mistaken asignment was the 30 kph sign for a 40 kph sign. This intuitivly makes sense. They're both speed signs, and with the low resolution of the data it can be difficult to distinguish between the two.
 
-#### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
+#### 3. Softmax on external signs
 
 The code for making predictions on my final model is located in the 28th cell of the Ipython notebook.
 
@@ -274,3 +273,5 @@ The network was exceptionally confident that this was a No Passing sign. It is c
 #### 1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
 
 ![alt text][image10]
+
+For this sign, the network used the perimeter ring, the gradient between the interior and exterior colors, and the circular nature of the sign. In particular FeatureMap 3 focused strongly on the lack of darkness in the center circle, While FeatureMap1 and 5 focused on the solid white middle circle. FeatureMap2 seems to focus on the gradient between rings.
