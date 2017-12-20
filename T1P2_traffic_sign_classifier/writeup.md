@@ -206,9 +206,9 @@ On the external traffic sign dataset, an accuracy of 80% was achieved. On other 
 The code for making predictions on my final model is located in the 28th cell of the Ipython notebook.
 
 ##### 30 kph sign #1
-![alt text][image4]
+![alt text][image4] ![alt text][image11]
 
-The network is 56% confident this is a 50 kph stop sign, and 24% confident it is a 30 kph sign. It is a 30 kph sign, but 50 kph is an understandable guess.
+The network is 56% confident this is a 50 kph stop sign, and 24% confident it is a 30 kph sign. 50 kph is an understandable guess given that they are both speed signs and the similarity between 5 and 3.
 
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
@@ -218,10 +218,8 @@ The network is 56% confident this is a 50 kph stop sign, and 24% confident it is
 | 5.5e-5      			| Speed Limit 70 kph							|
 | 9.7e-6			    | Speed Limit 60 kph							|
 
-![alt text][image11]
-
 ##### Road Work #25
-![alt text][image8]
+![alt text][image8] ![alt text][image15]
 
 The network correctly identified with 93% certainty that this is a road work sign. The other possibilities are also triangular signs with pictograms on them.
 
@@ -233,11 +231,9 @@ The network correctly identified with 93% certainty that this is a road work sig
 | .01       			| Slippery Road			 						|
 | .003  			    | Bumpy Road      								|
 
-![alt text][image15]
-
-
 ##### No Vehicles #15
-![alt text][image7]
+![alt text][image7] ![alt text][image14]
+
 The network was exceptionally confident that this was a No Vehicles sign. It is correct.
 
 | Probability         	|     Prediction	        					| 
@@ -248,10 +244,8 @@ The network was exceptionally confident that this was a No Vehicles sign. It is 
 | 1.4e-15				| Stop					 						|
 | 5.6e-16				| Speed Limit 50 kph							|
 
-![alt text][image14]
-
 ##### Priority Road #12
-![alt text][image6]
+![alt text][image6] ![alt text][image13]
 
 The network was exceptionally confident that this was a Priority Road sign. It is correct.
 
@@ -263,12 +257,10 @@ The network was exceptionally confident that this was a Priority Road sign. It i
 | 4.8e-35				| Speed Limit 100 kph	 						|
 | 3.2e-37				| No Entry										|
 
-![alt text][image13]
-
 ##### No Passing #9
 The network was exceptionally confident that this was a No Passing sign. It is correct.
 
-![alt text][image5]
+![alt text][image5] ![alt text][image12]
 
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
@@ -277,9 +269,6 @@ The network was exceptionally confident that this was a No Passing sign. It is c
 | 1.0e-13				| No passing for vehicles over 3.5 metric tons	|
 | 1.9e-15				| No Vehicles			 						|
 | 8.8e-16				| Speed Limit 70 kph							|
-
-![alt text][image12]
-
 
 ### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
 #### 1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
