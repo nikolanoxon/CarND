@@ -83,7 +83,14 @@ Per the methods found in [LeCann's Paper on Traffic Sign Recognition]('http://ya
 - Rotation about the center of +/-15deg
 - Skew of the X and Y axes by +/-2px
 
-![alt text][image9]    ![alt text][image2]    ![alt text][image3]
+Original
+![alt text][image9]
+
+Preprocessed
+![alt text][image2]
+
+Augmented
+![alt text][image3]
 
 
 #### 2. Network Architecture
@@ -107,9 +114,6 @@ The network used was derived from LeNet5, with improvements made to identify tra
 | Dropout       		| 50%       									|
 | Fully connected		| outputs 43  									|
 | Softmax				|           									|
-|						|												|
-|						|												|
-
 
 #### 3. Network Training
 
