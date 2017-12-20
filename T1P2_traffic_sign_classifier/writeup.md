@@ -20,12 +20,18 @@ The goals / steps of this project are the following:
 [image1]: ./examples/GST_histogram.png "Histogram of Sign Classes in the Dataset"
 [image2]: ./examples/preprocess.png "Preprocessing"
 [image3]: ./examples/augment.png "Augmenting"
-[image4]: ./examples/GST_01.jpg "Traffic Sign 1"
-[image5]: ./examples/GST_01.jpg "Traffic Sign 2"
-[image6]: ./examples/GST_01.jpg "Traffic Sign 3"
-[image7]: ./examples/GST_01.jpg "Traffic Sign 4"
-[image8]: ./examples/GST_01.jpg "Traffic Sign 5"
+[image4]: ./examples/GST_01.jpg "Speed Limit 30kph"
+[image5]: ./examples/GST_09.jpg "No Passing"
+[image6]: ./examples/GST_12.jpg "Priority Road"
+[image7]: ./examples/GST_15.jpg "No Vehicles"
+[image8]: ./examples/GST_25.jpg "Road Work"
 [image9]: ./examples/original.png "Original"
+[image10]: ./examples/visualize_cnn.png "FC1 Visualization"
+[image11]: ./examples/softmax_01.png "Softmax Speed Limit 30kph"
+[image12]: ./examples/softmax_09.png "Softmax No Passing"
+[image13]: ./examples/softmax_12.png "Softmax Priority Road"
+[image14]: ./examples/softmax_15.png "Softmax No Vehicles"
+[image15]: ./examples/softmax_25.png "Softmax Road Work"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -72,16 +78,12 @@ Normalization was performed second so that the mean and variance of each input w
 
 ##### Step 2: Augmentation
 
-Per the methods found in [LeCann's Paper on Traffic Sign Recognition]['http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf'], I also included augmented data to the original data set. Intuitivly this makes sense. By adding random perturbations to the original image, the robustness of the CNN to see identify signs in different situations is improved. The addition of augmented data resulted in significant improvement of the validation accuracy (see Section 4). All augmentations used were performed using OpenCV using the following:
+Per the methods found in [LeCann's Paper on Traffic Sign Recognition]('http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf'), I also included augmented data to the original data set. Intuitivly this makes sense. By adding random perturbations to the original image, the robustness of the CNN to see identify signs in different situations is improved. The addition of augmented data resulted in significant improvement of the validation accuracy (see Section 4). All augmentations used were performed using OpenCV using the following:
 - X and Y translation of +/-2px
 - Rotation about the center of +/-15deg
 - Skew of the X and Y axes by +/-2px
 
-![alt text][image9]
-
-![alt text][image2]
-
-![alt text][image3]
+![alt text][image9]    ![alt text][image2]    ![alt text][image3]
 
 
 #### 2. Network Architecture
@@ -175,10 +177,15 @@ After these changes it was observed that the training accuracy was 100%. This se
 
 Here are five German traffic signs that I found on the web:
 
-![alt text][Traffic Sign 1] ![alt text][Traffic Sign 2] ![alt text][Traffic Sign 3] 
-![alt text][Traffic Sign 4] ![alt text][Traffic Sign 5]
+![alt text][image4] ![alt text][image5] ![alt text][image6] 
+![alt text][image7] ![alt text][image8]
 
-The first image might be difficult to classify because ...
+Difficulties:
+1. Could be mistaken with other speed signs due to the low resolution of the text
+2. Shares features with other signs related to passing.
+3. In poor lighting, the yellow could be indistinguishable from the white background
+4. Shares basic feature of white on red with many signs.
+5. Many fine details may be hard for the network to differentiate. Looks very similar to the children crossing sign.
 
 #### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
@@ -186,33 +193,95 @@ Here are the results of the prediction:
 
 | Image			        |     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| Speed Limit 30kph    	| Speed Limit 30kph   							| 
+| No Passing     		| No Passing 									|
+| Priority Road			| Priority Road									|
+| No Vehicles   		| No Vehicles					 				|
+| Road Work	    		| Road Work         							|
 
-
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+On the external traffic sign dataset, an accuracy of 80% was achieved. On other training rounds for this network, the accuracy was 100%. Compared to the test set (95.1%), this result matches up excellently. The only mistaken asignment was the 30 kph sign for a 40 kph sign. This intuitivly makes sense. They're both speed signs, and with the low resolution of the data it can be difficult to distinguish between the two.
 
 #### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+The code for making predictions on my final model is located in the 28th cell of the Ipython notebook.
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
+##### 30 kph sign #1
+![alt text][image4]
+
+The network is 56% confident this is a 50 kph stop sign, and 24% confident it is a 30 kph sign. It is a 30 kph sign, but 50 kph is an understandable guess.
 
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
+| .56         			| Speed Limit 50 kph							| 
+| .24     				| Speed Limit 30 kph							|
+| .19					| Speed Limit 80 kph							|
+| 5.5e-5      			| Speed Limit 70 kph							|
+| 9.7e-6			    | Speed Limit 60 kph							|
+
+![alt text][image11]
+
+##### Road Work #25
+![alt text][image8]
+
+The network correctly identified with 93% certainty that this is a road work sign. The other possibilities are also triangular signs with pictograms on them.
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| .93         			| Road Work   									| 
+| .24     				| Wild Animals Crossing 						|
+| .02					| Bicycles Crossing								|
+| .01       			| Slippery Road			 						|
+| .003  			    | Bumpy Road      								|
+
+![alt text][image15]
 
 
-For the second image ... 
+##### No Vehicles #15
+![alt text][image7]
+The network was exceptionally confident that this was a No Vehicles sign. It is correct.
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 1.0					| No Vehicles									| 
+| 2.3e-13  				| Speed Limit 70 kph							|
+| 1.6e-13				| Priority Road									|
+| 1.4e-15				| Stop					 						|
+| 5.6e-16				| Speed Limit 50 kph							|
+
+![alt text][image14]
+
+##### Priority Road #12
+![alt text][image6]
+
+The network was exceptionally confident that this was a Priority Road sign. It is correct.
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 1.0					| Priority Road									| 
+| 2.7e-27  				| Keep Right									|
+| 9.9e-34				| Roundabout Mandatory							|
+| 4.8e-35				| Speed Limit 100 kph	 						|
+| 3.2e-37				| No Entry										|
+
+![alt text][image13]
+
+##### No Passing #9
+The network was exceptionally confident that this was a No Passing sign. It is correct.
+
+![alt text][image5]
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 1.0					| No Passing									| 
+| 1.5e-13  				| Speed Limit 120 kph							|
+| 1.0e-13				| No passing for vehicles over 3.5 metric tons	|
+| 1.9e-15				| No Vehicles			 						|
+| 8.8e-16				| Speed Limit 70 kph							|
+
+![alt text][image12]
+
 
 ### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
 #### 1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
 
-
+![alt text][image10]
