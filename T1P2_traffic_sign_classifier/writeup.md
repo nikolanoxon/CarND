@@ -2,8 +2,6 @@
 
 ## Writeup
 
-### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
 ---
 
 **Build a Traffic Sign Recognition Project**
@@ -27,14 +25,13 @@ The goals / steps of this project are the following:
 [image6]: ./examples/GST_01.jpg "Traffic Sign 3"
 [image7]: ./examples/GST_01.jpg "Traffic Sign 4"
 [image8]: ./examples/GST_01.jpg "Traffic Sign 5"
+[image9]: .ecamples/original.png "Original"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
 
 ---
 ### Writeup
-
-#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf. You can use this template as a guide for writing the report. The submission includes the project code.
 
 My project code can be found here: [project code](https://github.com/nikolanoxon/CarND/tree/master/T1P2_traffic_sign_recognition/)
 
@@ -57,57 +54,98 @@ Shown below is a histogram of all the signs in the data set, binned according to
 
 ![alt text][image1]
 
+This provided a clear understanding of the variety of available examples for training.
+
 ### Design and Test a Model Architecture
 
 #### 1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
 
-As a first step, I decided to convert the images to grayscale because ...
+#### Step 1: Preprocessing
 
-Here is an example of a traffic sign image before and after grayscaling.
+Prprocessing of the data was performed with two methods:
+1. Convert to greyscale
+2. Normalize
 
+Greyscaling was beneficial because it reduced the image channels from 3 to 1, effectivly reducing the number of inputs by 1/3. It was justified in that, for traffic signs, color does not add meaningful value this specific kind of object detection. Traffic signs are designed to stimulate "glance value" via shape and color for a human observer. However a CNN does not require the glance value benefit of color. And in fact all traffic signs are readily distinguishable from each other in B&W.
+
+Normalization was performed second so that the mean and variance of each input would be 0 and 1 respectivly. This normalization of the inputes allows the weights to have similar values, which in turn improves the ability of the CNN to learn.
+
+All preprocessing was done with OpenCV methods. Here is an example of a traffic sign image before and after preprocessing.
+
+![alt text][image9]
 ![alt text][image2]
 
-As a last step, I normalized the image data because ...
+#### Step 2: Augmentation
 
-I decided to generate additional data because ... 
+Per the methods found in [LeCann's Paper on Traffic Sign Recognition]['http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf'], I also included augmented data to the original data set. Intuitivly this makes sense. By adding random perturbations to the original image, the robustness of the CNN to see identify signs in different situations is improved. The addition of augmented data resulted in significant improvement of the validation accuracy (see Section 4). The augmentations used were the following:
+- X and Y translation of +/-2px
+- Rotation about the center of +/-15deg
+- Skew of the X and Y axes by +/-2px
 
-To add more data to the the data set, I used the following techniques because ... 
-
-Here is an example of an original image and an augmented image:
+![alt text][image9]
 
 ![alt text][image3]
 
-The difference between the original data set and the augmented data set is the following ... 
 
+#### 2. Network Architecture
 
-#### 2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
-
-My final model consisted of the following layers:
+The network used was derived from LeNet5, with improvements made to identify traffic signs. The changes from LeNet are:
+- Changing the FC1 and FC2 outputs from (120, 84) to (250, 120)
+- Adding a dropout layer after FC1 and FC2
 
 | Layer         		|     Description	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
+| Input         		| 32x32x1 Gray image   							| 
+| Convolution 5x5     	| 1x1 stride, valid padding, outputs 28x28x6 	|
 | RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
+| Max pooling	      	| 2x2 stride, valid padding, outputs 14x14x6 	|
+| Convolution 10x10    	| 1x1 stride, valid padding, outputs 10x10x16 	|
+| RELU					|												|
+| Max pooling	      	| 2x2 stride, valid padding, outputs 5x5x16 	|
+| Fully connected		| outputs 250  									|
+| Dropout       		| 50%       									|
+| Fully connected		| outputs 120  									|
+| Dropout       		| 50%       									|
+| Fully connected		| outputs 43  									|
+| Softmax				|           									|
 |						|												|
 |						|												|
- 
 
 
-#### 3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
+#### 3. Network Training
 
-To train the model, I used an ....
+Training was done using the Adams Optimizer, which was instructed to minimize the reduced mean of the softmax cross entropy between the logits and the labels. Adam was selected over traditional gradient decent because of its use of momentum to adjust the learn rate. This has been demonstrably shown to improve convergence rates. After much tuning (see section 4), the following hyperparameters were used:
+- Learning Rate = 0.001
+- Epochs = 50
+- Batch Size = 50
 
 #### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
+
 My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ? 
-* test set accuracy of ?
+* training set accuracy of 99.2%
+* validation set accuracy of 97.1%
+* test set accuracy of 95.1%
+
+##### Initial Setup
+
+|EPOCHS | BATCH_SIZE | rate | network | activation | normalization | augmentation | Validation | Test |
+|------|------|------|------|------|------|------|------|------|
+|10 | 128 | 0.001 | LeNet5 | ReLU | none | none | 0.863 | 0.853|
+
+##### Preprocessing
+|EPOCHS | BATCH_SIZE | rate | network | activation | normalization | augmentation | Validation | Test |
+|------|------|------|------|------|------|------|------|------|
+| 10 | 128 | 0.001 | LeNet5 | ReLU | simple | none | 0.885 | 0.891 |
+
+##### Tuned Hyperparameters
+
+##### Architecture Update
+
+##### Augmentation
+|EPOCHS | BATCH_SIZE | rate | network | activation | normalization | augmentation | Validation | Test |
+|------|------|------|------|------|------|------|------|------|
+| 100 | 50 | 0.001 | LeNet5+ | ReLU | OpenCV-MinMax | rotate/translate/skew | 0. | 0. |
 
 If an iterative approach was chosen:
 * What was the first architecture that was tried and why was it chosen?
@@ -128,8 +166,8 @@ If a well known architecture was chosen:
 
 Here are five German traffic signs that I found on the web:
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
+![alt text][Traffic Sign 1] ![alt text][Traffic Sign 2] ![alt text][Traffic Sign 3] 
+![alt text][Traffic Sign 4] ![alt text][Traffic Sign 5]
 
 The first image might be difficult to classify because ...
 
