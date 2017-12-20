@@ -25,7 +25,7 @@ The goals / steps of this project are the following:
 [image6]: ./examples/GST_01.jpg "Traffic Sign 3"
 [image7]: ./examples/GST_01.jpg "Traffic Sign 4"
 [image8]: ./examples/GST_01.jpg "Traffic Sign 5"
-[image9]: .ecamples/original.png "Original"
+[image9]: ./examples/original.png "Original"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -60,7 +60,7 @@ This provided a clear understanding of the variety of available examples for tra
 
 #### 1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
 
-#### Step 1: Preprocessing
+##### Step 1: Preprocessing
 
 Prprocessing of the data was performed with two methods:
 1. Convert to greyscale
@@ -68,21 +68,18 @@ Prprocessing of the data was performed with two methods:
 
 Greyscaling was beneficial because it reduced the image channels from 3 to 1, effectivly reducing the number of inputs by 1/3. It was justified in that, for traffic signs, color does not add meaningful value this specific kind of object detection. Traffic signs are designed to stimulate "glance value" via shape and color for a human observer. However a CNN does not require the glance value benefit of color. And in fact all traffic signs are readily distinguishable from each other in B&W.
 
-Normalization was performed second so that the mean and variance of each input would be 0 and 1 respectivly. This normalization of the inputes allows the weights to have similar values, which in turn improves the ability of the CNN to learn.
+Normalization was performed second so that the mean and variance of each input would be 0 and 1 respectivly. This normalization of the inputes allows the weights to have similar values, which in turn improves the ability of the CNN to learn. All preprocessing was done with OpenCV methods.
 
-All preprocessing was done with OpenCV methods. Here is an example of a traffic sign image before and after preprocessing.
+##### Step 2: Augmentation
 
-![alt text][image9]
-![alt text][image2]
-
-#### Step 2: Augmentation
-
-Per the methods found in [LeCann's Paper on Traffic Sign Recognition]['http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf'], I also included augmented data to the original data set. Intuitivly this makes sense. By adding random perturbations to the original image, the robustness of the CNN to see identify signs in different situations is improved. The addition of augmented data resulted in significant improvement of the validation accuracy (see Section 4). The augmentations used were the following:
+Per the methods found in [LeCann's Paper on Traffic Sign Recognition]['http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf'], I also included augmented data to the original data set. Intuitivly this makes sense. By adding random perturbations to the original image, the robustness of the CNN to see identify signs in different situations is improved. The addition of augmented data resulted in significant improvement of the validation accuracy (see Section 4). All augmentations used were performed using OpenCV using the following:
 - X and Y translation of +/-2px
 - Rotation about the center of +/-15deg
 - Skew of the X and Y axes by +/-2px
 
 ![alt text][image9]
+
+![alt text][image2]
 
 ![alt text][image3]
 
@@ -115,7 +112,7 @@ The network used was derived from LeNet5, with improvements made to identify tra
 #### 3. Network Training
 
 Training was done using the Adams Optimizer, which was instructed to minimize the reduced mean of the softmax cross entropy between the logits and the labels. Adam was selected over traditional gradient decent because of its use of momentum to adjust the learn rate. This has been demonstrably shown to improve convergence rates. After much tuning (see section 4), the following hyperparameters were used:
-- Learning Rate = 0.001
+- Learn Rate = 0.001
 - Epochs = 50
 - Batch Size = 50
 
@@ -127,38 +124,50 @@ My final model results were:
 * validation set accuracy of 97.1%
 * test set accuracy of 95.1%
 
-##### Initial Setup
+LeNet5 was used as the baseline, per the recommendation of the course instructor. LeNet5 seemed applicable because it is a CNN used for symbolic evaluation, and LeNet5 had been modified and used for traffic sign recognition previously. The first step was to preprocess the data, resulting in the following:
 
+##### Initial Setup
 |EPOCHS | BATCH_SIZE | rate | network | activation | normalization | augmentation | Validation | Test |
 |------|------|------|------|------|------|------|------|------|
 |10 | 128 | 0.001 | LeNet5 | ReLU | none | none | 0.863 | 0.853|
 
-##### Preprocessing
+##### After Preprocessing
 |EPOCHS | BATCH_SIZE | rate | network | activation | normalization | augmentation | Validation | Test |
 |------|------|------|------|------|------|------|------|------|
 | 10 | 128 | 0.001 | LeNet5 | ReLU | simple | none | 0.885 | 0.891 |
 
+I felt the next step was to identify good hypterparameters. The hyperparameters were tuned by picking a default setting, and then adjusting each hyperparameter individually. Each tuning which resulted in the best validation accuracy without sacrificing unneccesary training speed was kept. The default setting was:
+- Learn Rate = 0.001
+- Epochs = 10
+- Batch Size = 500
+
+The range of tunings were:
+- Learn Rate = 0.0001, 0.001, 0.005, 0.1
+- Epochs = 5, 10, 20, 50, 100
+- Batch Size = 10, 50, 128, 250, 500, 1000, 2000
+
 ##### Tuned Hyperparameters
-
-##### Architecture Update
-
-##### Augmentation
 |EPOCHS | BATCH_SIZE | rate | network | activation | normalization | augmentation | Validation | Test |
 |------|------|------|------|------|------|------|------|------|
-| 100 | 50 | 0.001 | LeNet5+ | ReLU | OpenCV-MinMax | rotate/translate/skew | 0. | 0. |
+| 50 | 50 | 0.001 | LeNet5 | ReLU | simple | none | 0.955 | 0.930 |
 
-If an iterative approach was chosen:
-* What was the first architecture that was tried and why was it chosen?
-* What were some problems with the initial architecture?
-* How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to overfitting or underfitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
-* Which parameters were tuned? How were they adjusted and why?
-* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
+After exhaustivly tuning the hyperparameters, the project requirement for validation accuracy had been fulfilled. There was many more options yet to explore, however.
 
-If a well known architecture was chosen:
-* What architecture was chosen?
-* Why did you believe it would be relevant to the traffic sign application?
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
- 
+First, dropouts were added after FC1 and FC2. These were not included in the original LeNet5, but since its inception have been shown to remarkedly improve robustness for CNNs. Dropouts are particularly useful for traffic sign recognition, because many times some of the features of a sign may be lost due to weather conditions, lighting, angle of approach, deterioration, etc.
+
+Since LeNet5 was designed for numbers, it has relatively small fully connected layers. I thought that since traffic signs were so much more complex than numbers, there was likely many more features which could be extrapolated from the dataset. With that in mind, the size of FC1 and FC2 was doubled from 120 and 84 to 250 and 120. This allows the network to train on more features it observes. This has an added benefit when combined with dropouts, because the network is training with roughly the same number of features as before (2x the features, 50% dropout), but is also building robustness by training through different paths every pass through. These additions improved the test accuracy by over 1.5%.
+
+##### Architecture Update + OpenCV Normalization
+|EPOCHS | BATCH_SIZE | rate | network | activation | normalization | augmentation | Validation | Test |
+|------|------|------|------|------|------|------|------|------|
+| 50 | 50 | 0.001 | LeNet5 + 2xFC | ReLU + 50% drop | OpenCV | none | 0.961 | 0.947 |
+
+After these changes it was observed that the training accuracy was 100%. This seemed to point towards overfitting of the training data, which was further corroborated when tested against externally chosen traffic signs. The last step was to add augmented data, as outlined in 1.1. This further built robustness by adding skewing, rotation, and translation of the images as well as doubling the size of the dataset.
+
+##### OpenCV Augmentation
+|EPOCHS | BATCH_SIZE | rate | network | activation | normalization | augmentation | Validation | Test |
+|------|------|------|------|------|------|------|------|------|
+| 100 | 50 | 0.001 | LeNet5+ | ReLU | OpenCV-MinMax | rotate / trans / skew | 0.971 | 0.951 |
 
 ### Test a Model on New Images
 
